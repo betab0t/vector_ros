@@ -1,0 +1,6 @@
+version: '3'
+services:
+  vector-ros-service:
+    build: .
+    volumes:
+      - .:/catkin_ws/src/vector_ros
