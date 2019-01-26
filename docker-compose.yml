@@ -1,0 +1,13 @@
+version: '3'
+services:
+  vector-ros-service:
+    build:
+      context: .
+      args:
+        anki_user_email: <ANKI_USER_EMAIL>
+        anki_user_password: <ANKI_USER_PASSWORD>
+        vector_ip: <VECTOR_IP> # https://developer.anki.com/vector/docs/troubleshooting.html#can-t-find-vector-s-ip-address
+        vector_name: <VECTOR_NAME> # https://developer.anki.com/vector/docs/troubleshooting.html#can-t-find-robot-name
+        vector_serial: <VECTOR_SERIAL> # https://developer.anki.com/vector/docs/troubleshooting.html#can-t-find-serial-number
+    volumes:
+      - .:/catkin_ws/src/vector_ros
