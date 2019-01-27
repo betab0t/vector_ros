@@ -1,4 +1,4 @@
-FROM ros:melodic
+FROM osrf/ros:melodic-desktop-full
 
 ARG anki_user_email
 ARG anki_user_password
@@ -6,11 +6,11 @@ ARG vector_ip
 ARG vector_name
 ARG vector_serial
 
-# Init ROS and setup a workspace
-RUN bash ./ros_entrypoint.sh
+# Init Catkin workspace
 RUN mkdir -p /catkin_ws/src/vector_ros
+RUN echo "source /catkin_ws/devel/setup.bash" >> ~/.bashrc
 
-# Install required dependencies for ROS-Python3.6 nodes
+# Install required dependencies
 RUN apt-get update && apt-get install -y \
     python3-yaml \
     python3-pip \
@@ -39,6 +39,12 @@ ENV env_vector_serial=$vector_serial
 # Setup Anki's SDK
 RUN python3 -m pip install --user anki_vector && ./configure.sh && rm configure.sh
 
+# Install and build diff_drive package
+RUN cd /catkin_ws/src && \
+    git clone https://github.com/merose/diff_drive && \
+    cd .. && \
+    /ros_entrypoint.sh catkin_make
+
 WORKDIR /catkin_ws
 
-CMD bash
+CMD /bin/bash -c "source /catkin_ws/devel/setup.bash && roslaunch vector_ros vector.launch"
