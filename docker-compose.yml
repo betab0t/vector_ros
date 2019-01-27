@@ -11,3 +11,12 @@ services:
         vector_serial: <VECTOR_SERIAL> # https://developer.anki.com/vector/docs/troubleshooting.html#can-t-find-serial-number
     volumes:
       - .:/catkin_ws/src/vector_ros
+      - /home/${USER}:/home/${USER}
+      - /etc/group:/etc/group:ro
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/shadow:/etc/shadow:ro
+      - /etc/sudoers.d:/etc/sudoers.d:ro
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    user: ${USER}
+    environment:
+      - DISPLAY

@@ -1,5 +1,5 @@
 <launch>
-    <arg name="model" default="$(find vector-ros)/urdf/vector.urdf.xacro" />
+    <arg name="model" default="$(find vector_ros)/urdf/vector.urdf.xacro" />
     <param name="robot_description" command="$(find xacro)/xacro --inorder $(arg model)" />
 
     <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
@@ -10,8 +10,13 @@
         <param name="rate" value="10.0"/>
     </node>
 
-    <arg name="ticks_per_meter" value="10000" />
-    <arg name="wheel_separation" value="0.2" />
+    <arg name="ticks_per_meter" value="1000" />
+    <arg name="wheel_separation" value="0.1" />
+
+    <node pkg="vector_ros" type="vector_node.py" name="vector" output="screen">
+        <remap from="~lwheel_desired_rate" to="lwheel_desired_rate" />
+        <remap from="~rwheel_desired_rate" to="rwheel_desired_rate" />
+    </node>
 
     <node name="controller" pkg="diff_drive" type="diff_drive_controller" output="screen">
     <rosparam subst_value="true">
@@ -52,7 +57,11 @@
         <remap from="cmd_vel" to="/robot/cmd_vel" />
     </node>
 
-    <arg name="rvizconfig" default="$(find vector-ros)/rviz/config.rviz" />
+    <node name="rqt_robot_steering" type="rqt_robot_steering" pkg="rqt_robot_steering">
+        <param name="default_topic" value="/robot/cmd_vel"/>
+    </node>
+    
+    <arg name="rvizconfig" default="$(find vector_ros)/rviz/config.rviz" />
     <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
 
 </launch>
