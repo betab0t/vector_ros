@@ -47,4 +47,4 @@ RUN cd /catkin_ws/src && \
 
 WORKDIR /catkin_ws
 
-CMD /bin/bash -c "source /catkin_ws/devel/setup.bash && roslaunch vector_ros vector.launch"
+CMD /bin/bash -c "catkin_make && source /catkin_ws/devel/setup.bash && roslaunch vector_ros vector.launch"

@@ -1,0 +1,6 @@
+---
+float32 battery_volts
+int32 battery_level
+bool is_charging
+bool is_on_charger_platform
+float32 suggested_charger_sec
