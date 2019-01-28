@@ -3,6 +3,8 @@
 import rospy
 import anki_vector
 
+import vector
+
 from std_msgs.msg import Int32
 
 rospy.init_node("vector")
@@ -40,6 +42,9 @@ rwheel_desired_rate_subscriber = rospy.Subscriber("~rwheel_desired_rate", Int32,
 
 lwheel_ticks_total = 0
 rwheel_ticks_total = 0
+
+# init Vector service
+vector_service = vector.VectorService(robot)
 
 while not rospy.is_shutdown():
     if robot.left_wheel_speed_mmps > 0:
