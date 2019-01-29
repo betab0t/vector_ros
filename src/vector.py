@@ -2,6 +2,7 @@
 
 import rospy
 import anki_vector
+import concurrent.futures
 
 from vector_ros.srv import BatteryState, BatteryStateResponse
 
@@ -11,8 +12,15 @@ class VectorService:
         self.battery_state_service = rospy.Service("~battery_state", BatteryState, self.battery_state_service_cb)
 
     def battery_state_service_cb(self, request):
-        battery_state = self.robot.get_battery_state()
+        job = self.robot.get_battery_state()
         response = BatteryStateResponse()
+
+        try:
+            battery_state = job.result(2) # wait max 2 secs
+        except concurrent.futures.TimeoutError:
+            rospy.logerr("timeout - could not get battery state!")
+            return response
+
         response.battery_volts = battery_state.battery_volts
         response.battery_level = battery_state.battery_level
         response.is_charging = battery_state.is_charging
