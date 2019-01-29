@@ -4,6 +4,7 @@ import rospy
 import anki_vector
 
 import vector
+import anim
 
 from std_msgs.msg import Int32
 
@@ -12,7 +13,7 @@ rospy.init_node("vector")
 RATE = 2
 rate = rospy.Rate(RATE)
 
-robot = anki_vector.Robot()
+robot = anki_vector.AsyncRobot()
 robot.connect()
 
 # publishers
@@ -43,8 +44,9 @@ rwheel_desired_rate_subscriber = rospy.Subscriber("~rwheel_desired_rate", Int32,
 lwheel_ticks_total = 0
 rwheel_ticks_total = 0
 
-# init Vector service
+# init Vector services
 vector_service = vector.VectorService(robot)
+animation = anim.Animation(robot) # share robot object
 
 while not rospy.is_shutdown():
     if robot.left_wheel_speed_mmps > 0:
