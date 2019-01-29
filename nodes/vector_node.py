@@ -3,9 +3,9 @@
 import rospy
 import anki_vector
 
-import vector
-import anim
-import drive
+from vector_ros.vector import Vector
+from vector_ros.anim import Animation
+from vector_ros.drive import Drive
 
 
 if __name__=="__main__":
@@ -16,8 +16,8 @@ if __name__=="__main__":
     async_robot.connect()
 
     # start all using shared AsyncRobot object
-    vector.Vector(async_robot)
-    anim.Animation(async_robot)
-    drive.Drive(async_robot)
+    Vector(async_robot)
+    Animation(async_robot)
+    Drive(async_robot)
 
     rospy.spin()
