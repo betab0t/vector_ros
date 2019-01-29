@@ -6,7 +6,9 @@ import concurrent.futures
 
 from vector_ros.srv import BatteryState, BatteryStateResponse
 
-class VectorService:
+class Vector:
+    '''Expose functions list at https://developer.anki.com/vector/docs/generated/anki_vector.html'''
+
     def __init__(self, robot):
         self.robot = robot
         self.battery_state_service = rospy.Service("~battery_state", BatteryState, self.battery_state_service_cb)

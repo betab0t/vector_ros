@@ -9,6 +9,8 @@ from vector_ros.msg import PlayAnimationAction
 from vector_ros.srv import AnimList, AnimListResponse
 
 class Animation:
+    '''Expose functions list at https://developer.anki.com/vector/docs/generated/anki_vector.animation.html'''
+
     def __init__(self, robot):
         self.robot = robot
         self.rate = rospy.Rate(4)
