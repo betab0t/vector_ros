@@ -6,13 +6,17 @@ import actionlib
 import anki_vector
 
 from vector_ros.msg import PlayAnimationAction
+from vector_ros.srv import AnimList, AnimListResponse
 
 class Animation:
     def __init__(self, robot):
         self.robot = robot
         self.rate = rospy.Rate(4)
-        self.action_server = actionlib.SimpleActionServer("~/play_animation", PlayAnimationAction, self.play_animation_cb, False)
+
+        self.action_server = actionlib.SimpleActionServer("~play_animation", PlayAnimationAction, self.play_animation_cb, False)
         self.action_server.start()
+
+        self.anim_list_service = rospy.Service("~anim_list", AnimList, self.anim_list_cb)
 
     def play_animation_cb(self, msg):
         job = self.robot.anim.play_animation(msg.anim)
@@ -25,6 +29,12 @@ class Animation:
 
         if not job.cancelled():
             self.action_server.set_succeeded()
+
+    def anim_list_cb(self, request):
+        response = AnimListResponse()
+        response.anim_names = self.robot.anim.anim_list
+
+        return response
 
 
 if __name__=="__main__":

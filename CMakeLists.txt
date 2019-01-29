@@ -58,6 +58,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_service_files(
    FILES
    BatteryState.srv
+   AnimList.srv
 )
 
 ## Generate actions in the 'action' folder
