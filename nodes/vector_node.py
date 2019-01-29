@@ -8,6 +8,7 @@ from vector_ros.vector import Vector
 from vector_ros.anim import Animation
 from vector_ros.drive import Drive
 from vector_ros.camera import Camera
+from vector_ros.behavior import Behavior
 
 if __name__=="__main__":
     rospy.init_node("vector")
@@ -19,6 +20,7 @@ if __name__=="__main__":
     # start all using shared AsyncRobot object
     Vector(async_robot)
     Animation(async_robot)
+    Behavior(async_robot)
 
     # these services require threads to run(and publish) in parallel
     drive_thread = threading.Thread(target=Drive, args=(async_robot,))
