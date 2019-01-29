@@ -6,7 +6,7 @@ import concurrent.futures
 
 from vector_ros.srv import BatteryState, BatteryStateResponse
 
-class VectorService:
+class Vector:
     def __init__(self, robot):
         self.robot = robot
         self.battery_state_service = rospy.Service("~battery_state", BatteryState, self.battery_state_service_cb)
