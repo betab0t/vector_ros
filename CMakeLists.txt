@@ -59,6 +59,8 @@ add_service_files(
    FILES
    BatteryState.srv
    AnimList.srv
+   HeadAngle.srv
+   LiftHeight.srv
 )
 
 ## Generate actions in the 'action' folder
