@@ -35,5 +35,5 @@ if __name__=="__main__":
     rospy.init_node("vector")
     robot = anki_vector.Robot()
     robot.connect()
-    VectorService(robot)
+    Vector(robot)
     rospy.spin()

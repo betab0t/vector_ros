@@ -43,5 +43,5 @@ if __name__=="__main__":
     rospy.init_node("vector_anim")
     robot = anki_vector.AsyncRobot()
     robot.connect()
-    animation = Animation(robot)
+    Animation(robot)
     rospy.spin()
