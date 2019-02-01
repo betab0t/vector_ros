@@ -1,0 +1,6 @@
+<launch>
+    <node pkg="vector_ros" type="vector_node.py" name="vector" output="screen">
+        <param name="use_mock" value="True"/>
+    </node>
+    <test pkg="vector_ros" type="test_vector_node.py" test-name="test_vector_node"/>
+</launch>

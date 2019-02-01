@@ -20,6 +20,12 @@ RUN pip3 install \
     rospkg \
     catkin_pkg
 
+# Install up-to-date rosunit so we'll get the patch for Python3
+RUN cd /catkin_ws/src/ && \
+    git clone https://github.com/ros/ros && \
+    cd .. && \
+    /ros_entrypoint.sh catkin_make install --pkg rosunit
+
 # Prepare Excpet script used to configure the SDK
 RUN printf '#!/usr/bin/expect -f\n\
     \rspawn python3.6 -m anki_vector.configure -e $env(env_anki_user_email) -i $env(env_vector_name) -n $env(env_vector_ip) -s $env(env_vector_serial)\n\
@@ -43,8 +49,8 @@ RUN python3 -m pip install --user anki_vector && ./configure.sh && rm configure.
 RUN cd /catkin_ws/src && \
     git clone https://github.com/merose/diff_drive && \
     cd .. && \
-    /ros_entrypoint.sh catkin_make
+    /ros_entrypoint.sh catkin_make --pkg diff_drive
 
 WORKDIR /catkin_ws
 
-CMD /bin/bash -c "catkin_make && source /catkin_ws/devel/setup.bash && roslaunch vector_ros vector.launch"
+CMD /bin/bash -c "catkin_make --pkg vector_ros && source /catkin_ws/devel/setup.bash && roslaunch vector_ros vector.launch"
