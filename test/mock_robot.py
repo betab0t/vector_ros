@@ -30,6 +30,13 @@ class MockCamera(object):
     def __init__(self):
         self.latest_image = Image.new('RGB', (1280, 720))
 
+class MockBehavior(object):
+    def set_head_angle(self, deg):
+        return
+
+    def set_lift_height(self, height):
+        return
+
 class MockRobot(object):
 
     class BatteryState(object):
@@ -44,6 +51,7 @@ class MockRobot(object):
         self.motors = MockMotorComponent()
         self.camera = MockCamera()
         self.anim = MockAnim()
+        self.behavior = MockBehavior()
 
     def connect(self):
         rospy.loginfo("mock robot connected!")

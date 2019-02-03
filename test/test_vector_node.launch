@@ -2,5 +2,24 @@
     <node pkg="vector_ros" type="vector_node.py" name="vector" output="screen">
         <param name="use_mock" value="True"/>
     </node>
+
+    <!-- test all required topics are published -->
+    <test pkg="rostest" type="publishtest" test-name="publishtest">
+        <rosparam>
+            topics:
+                - name: /vector/lwheel_ticks
+                  timeout: 2
+                  negative: False
+                - name: /vector/rwheel_ticks
+                  timeout: 2
+                  negative: False
+                - name: /vector/camera
+                  timeout: 2
+                  negative: False
+        </rosparam>
+    </test>
+
+    <!-- test subscribers, services and actions -->
     <test pkg="vector_ros" type="test_vector_node.py" test-name="test_vector_node"/>
+
 </launch>
