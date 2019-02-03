@@ -23,7 +23,7 @@ if __name__=="__main__":
         async_robot = mock_robot.MockRobot()
 
     else:
-        async_robot = anki_vector.AsyncRobot()
+        async_robot = anki_vector.AsyncRobot(enable_camera_feed=True)
 
     # connect to Vector
     async_robot.connect()
