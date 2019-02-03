@@ -11,11 +11,13 @@
     </node>
 
     <arg name="ticks_per_meter" value="1000" />
-    <arg name="wheel_separation" value="0.1" />
+    <arg name="wheel_separation" value="0.055" />
 
     <node pkg="vector_ros" type="vector_node.py" name="vector" output="screen">
         <remap from="~lwheel_desired_rate" to="lwheel_desired_rate" />
         <remap from="~rwheel_desired_rate" to="rwheel_desired_rate" />
+        <remap from="~lwheel_ticks" to="lwheel_ticks" />
+        <remap from="~rwheel_ticks" to="rwheel_ticks" />
     </node>
 
     <node name="controller" pkg="diff_drive" type="diff_drive_controller" output="screen">
@@ -33,13 +35,6 @@
           ticks_per_meter: $(arg ticks_per_meter)
           wheel_separation: $(arg wheel_separation)
         </rosparam>
-    </node>
-
-    <node name="robot" pkg="diff_drive" type="diff_drive_mock_robot" output="screen">
-        <remap from="~lwheel_desired_rate" to="lwheel_desired_rate" />
-        <remap from="~rwheel_desired_rate" to="rwheel_desired_rate" />
-        <remap from="~lwheel_ticks" to="lwheel_ticks" />
-        <remap from="~rwheel_ticks" to="rwheel_ticks" />
     </node>
 
     <node name="diff_drive_go_to_goal" pkg="diff_drive" type="diff_drive_go_to_goal" output="screen">
