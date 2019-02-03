@@ -11,7 +11,7 @@ class Behavior(object):
     def __init__(self, robot):
         self.robot = robot
         self.set_head_angle_service = rospy.Service("~set_head_angle", HeadAngle, self.set_head_angle_service_cb)
-        self.set_lift_height_service=rospy.Service("~set_lift_height", LiftHeight, self.set_lift_height_service_cb)
+        self.set_lift_height_service = rospy.Service("~set_lift_height", LiftHeight, self.set_lift_height_service_cb)
 
     def set_head_angle_service_cb(self, request):
         self.robot.behavior.set_head_angle(anki_vector.util.degrees(request.deg))
