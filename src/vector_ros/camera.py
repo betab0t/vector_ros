@@ -15,12 +15,13 @@ class Camera(object):
         self.publish_camera_feed()
 
     def publish_camera_feed(self):
-        bridge=cv_bridge.CvBridge()
+        bridge = cv_bridge.CvBridge()
 
         while not rospy.is_shutdown():
             image = bridge.cv2_to_imgmsg(numpy.array(self.async_robot.camera.latest_image)) # convert PIL.Image to ROS Image
             self.image_publisher.publish(image)
 
+            # make sure to publish at required rate
             self.rate.sleep()
 
 if __name__=="__main__":

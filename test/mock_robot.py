@@ -7,15 +7,15 @@ from PIL import Image
 
 class MockMotorComponent(object):
     def __init__(self):
-        self._left_wheel_speed=0
-        self._right_wheel_speed=0
+        self._left_wheel_speed = 0
+        self._right_wheel_speed = 0
 
-    def set_wheel_motors(self,left_wheel_speed,right_wheel_speed):
-        self._left_wheel_speed=left_wheel_speed
-        self._right_wheel_speed=right_wheel_speed
+    def set_wheel_motors(self, left_wheel_speed, right_wheel_speed):
+        self._left_wheel_speed = left_wheel_speed
+        self._right_wheel_speed = right_wheel_speed
 
     def get_wheel_motors(self):
-        return self._left_wheel_speed,self._right_wheel_speed
+        return self._left_wheel_speed, self._right_wheel_speed
 
 class MockAnim(object):
     def __init__(self):

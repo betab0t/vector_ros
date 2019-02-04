@@ -6,7 +6,7 @@ import concurrent.futures
 
 from vector_ros.srv import BatteryState, BatteryStateResponse
 
-class Vector:
+class Vector(object):
     '''Expose functions list at https://developer.anki.com/vector/docs/generated/anki_vector.html'''
 
     def __init__(self, robot):

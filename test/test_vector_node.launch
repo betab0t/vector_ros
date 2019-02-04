@@ -1,4 +1,5 @@
 <launch>
+    <!-- start vector node and use mock instead of actual robot -->
     <node pkg="vector_ros" type="vector_node.py" name="vector" output="screen">
         <param name="use_mock" value="True"/>
     </node>
