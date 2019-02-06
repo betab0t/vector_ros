@@ -18,7 +18,7 @@ class Camera(object):
         bridge = cv_bridge.CvBridge()
 
         while not rospy.is_shutdown():
-            image = bridge.cv2_to_imgmsg(numpy.array(self.async_robot.camera.latest_image)) # convert PIL.Image to ROS Image
+            image = bridge.cv2_to_imgmsg(numpy.asarray(self.async_robot.camera.latest_image), encoding="rgb8") # convert PIL.Image to ROS Image
             self.image_publisher.publish(image)
 
             # make sure to publish at required rate

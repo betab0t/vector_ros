@@ -14,7 +14,12 @@ RUN echo "source /catkin_ws/devel/setup.bash" >> ~/.bashrc
 RUN apt-get update && apt-get install -y \
     python3-yaml \
     python3-pip \
-    expect
+    expect \
+    python-catkin-tools \
+    python3-dev \
+    python3-catkin-pkg-modules \
+    python3-numpy python3-yaml \
+    ros-melodic-cv-bridge
 
 RUN pip3 install \
     rospkg \
@@ -51,6 +56,22 @@ RUN cd /catkin_ws/src && \
     cd .. && \
     /ros_entrypoint.sh catkin_make --pkg diff_drive
 
+# Build cv_bridge for Python3.6
+RUN /ros_entrypoint.sh /bin/bash -c "mkdir /cv_bridge_build_ws && \
+                                     cd /cv_bridge_build_ws && \
+                                     catkin init && \
+                                     catkin config -DPYTHON_EXECUTABLE=/usr/bin/python3.6 -DPYTHON_INCLUDE_DIR=/usr/include/python3.6m -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.6m.so && \
+                                     catkin config --install && \
+                                     git clone https://github.com/ros-perception/vision_opencv.git src/vision_opencv && \
+                                     cd src/vision_opencv/ && \
+                                     git checkout melodic && \
+                                     cd ../../ && \
+                                     catkin build cv_bridge"
+
 WORKDIR /catkin_ws
 
-CMD /bin/bash -c "catkin_make --pkg vector_ros && source /catkin_ws/devel/setup.bash && roslaunch vector_ros vector.launch"
+CMD /bin/bash -c "catkin_make --pkg vector_ros && \
+                  source /catkin_ws/devel/setup.bash && \
+                  source /cv_bridge_build_ws/install/setup.bash --extend && \
+                  export QT_X11_NO_MITSHM=1 && \
+                  roslaunch vector_ros vector.launch"
