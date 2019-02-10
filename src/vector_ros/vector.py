@@ -5,6 +5,7 @@ import anki_vector
 import concurrent.futures
 
 from vector_ros.srv import BatteryState, BatteryStateResponse
+from vector_ros.srv import SayText, SayTextResponse
 
 class Vector(object):
     '''Expose functions list at https://developer.anki.com/vector/docs/generated/anki_vector.html'''
@@ -12,6 +13,7 @@ class Vector(object):
     def __init__(self, robot):
         self.robot = robot
         self.battery_state_service = rospy.Service("~battery_state", BatteryState, self.battery_state_service_cb)
+        self.say_text_service = rospy.Service("~say_text", SayText, self.say_text_cb)
 
     def battery_state_service_cb(self, request):
         job = self.robot.get_battery_state()
@@ -30,6 +32,11 @@ class Vector(object):
         response.suggested_charger_sec = battery_state.suggested_charger_sec
 
         return response
+
+    def say_text_cb(self, request):
+        self.robot.say_text(request.text)
+
+        return SayTextResponse()
 
 if __name__=="__main__":
     rospy.init_node("vector")

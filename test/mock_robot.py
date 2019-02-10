@@ -68,3 +68,6 @@ class MockRobot(object):
         res = concurrent.futures.Future()
         res.set_result(MockRobot.BatteryState())
         return res
+
+    def say_text(self, text):
+        return

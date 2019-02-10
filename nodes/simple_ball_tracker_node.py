@@ -9,6 +9,7 @@ from sensor_msgs.msg import Image
 from geometry_msgs.msg import Twist
 
 from vector_ros.srv import HeadAngle
+from vector_ros.srv import SayText
 
 class SimpleBallTracker(object):
     def __init__(self):
@@ -22,6 +23,10 @@ class SimpleBallTracker(object):
 
         # hsv color ranges of our red ball
         self.hsv_color_ranges = ((np.array([0, 70, 50]), np.array([10, 255, 255])), (np.array([170, 70, 50]), np.array([180, 255, 255])))
+
+        rospy.wait_for_service("/vector/say_text")
+        self.say_text = rospy.ServiceProxy("/vector/say_text", SayText)
+        self.is_ball_hidden = True
 
     def set_head_horizontal(self):
         rospy.wait_for_service("/vector/set_head_angle")
@@ -51,6 +56,11 @@ class SimpleBallTracker(object):
             ball_center = cx, cy = int(largest_area_object['m10'] / largest_area_object['m00']), int(largest_area_object['m01'] / largest_area_object['m00'])
             cv2.circle(cv_image, ball_center, 10, (0, 255, 0), -1)
 
+            # say something if the ball was previously hidden
+            if self.is_ball_hidden == True:
+                self.say_text(text="I found my ball")
+                self.is_ball_hidden = False
+
             # check if the ball is approximately centered, else apply simple proportional command
             if (width / 2 - (width / 12)) < cx < (width / 2 + (width / 12)):
                 self.cmd_vel_msg.angular.z = 0.0
@@ -60,6 +70,7 @@ class SimpleBallTracker(object):
 
         else:
             self.cmd_vel_msg.angular.z = 0.0
+            self.is_ball_hidden = True
 
         # move vector
         self.cmd_vel_pubisher.publish(self.cmd_vel_msg)

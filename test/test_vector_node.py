@@ -11,6 +11,7 @@ from vector_ros.msg import PlayAnimationAction, PlayAnimationGoal, PlayAnimation
 from vector_ros.srv import AnimList, AnimListResponse
 from vector_ros.srv import HeadAngle, HeadAngleResponse
 from vector_ros.srv import LiftHeight, LiftHeightResponse
+from vector_ros.srv import SayText, SayTextResponse
 
 class TestVectorNode(unittest.TestCase):
     def test_battery_state_service(self):
@@ -75,6 +76,12 @@ class TestVectorNode(unittest.TestCase):
         set_lift_height = rospy.ServiceProxy("/vector/set_lift_height", LiftHeight)
         res = set_lift_height(height=(0.75))
         self.assertIsInstance(res, LiftHeightResponse)
+
+    def test_say_text(self):
+        rospy.wait_for_service("/vector/say_text")
+        say_text = rospy.ServiceProxy("/vector/say_text", SayText)
+        res = say_text(text="Test!")
+        self.assertIsInstance(res, SayTextResponse)
 
 if __name__=="__main__":
     import rostest
