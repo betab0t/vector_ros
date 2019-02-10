@@ -52,6 +52,8 @@ Right wheel rotation rate. used by [diff_drive](https://github.com/merose/diff_d
 
 * `/vector/anim_list`
 
+* `/vector/say_text`
+
 # Actions
 
 * `/vector/play_animation`
