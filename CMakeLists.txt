@@ -61,6 +61,7 @@ add_service_files(
    AnimList.srv
    HeadAngle.srv
    LiftHeight.srv
+   SayText.srv
 )
 
 ## Generate actions in the 'action' folder
