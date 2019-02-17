@@ -1,5 +1,5 @@
 # vector_ros
-This repository contains my unofficial ROS package for [Anki's Vector](https://www.anki.com/en-us/vector) home robot.
+This repository contains my unofficial ROS package for [Anki Vector](https://www.anki.com/en-us/vector) home robot.
 
 # Setup
 ## Docker Image
@@ -60,6 +60,46 @@ Right wheel rotation rate. used by [diff_drive](https://github.com/merose/diff_d
 
 Play animation by name.
 
+# Examples
+## View single image from camera
+```sh
+beta_b0t@home:~$ rosrun image_view image_saver image:=/vector/camera
+[ INFO] [1550425113.646567813]: Saved image left0000.jpg
+[ INFO] [1550425113.752592532]: Saved image left0001.jpg
+[ INFO] [1550425113.848999553]: Saved image left0002.jpg
+...
+(Ctrl+C)
+...
+beta_b0t@home:~$ eog left0000.jpg
+```
+
+## Set head angle
+```sh
+beta_b0t@home:~$ rosservice call /vector/set_head_angle "deg: 45.0"
+```
+
+## Say text
+```sh
+beta_b0t@home:~$ rosservice call /vector/say_text "text: 'hello world'"
+```
+
+## Play animation 
+```sh
+beta_b0t@home:~$ rostopic pub /vector/play_animation/goal vector_ros/PlayAnimationActionGoal "header:
+  seq: 0
+  stamp:
+    secs: 0
+    nsecs: 0
+  frame_id: ''
+goal_id:
+  stamp:
+    secs: 0
+    nsecs: 0
+  id: ''
+goal:
+  anim: 'anim_turn_left_01'"
+```
+
 # FAQ
 - **[How do i find Vector's IP address?](https://developer.anki.com/vector/docs/troubleshooting.html#can-t-find-vector-s-ip-address)**
 
@@ -67,4 +107,5 @@ Play animation by name.
 
 - **[How do i find Vector's serial number?](https://developer.anki.com/vector/docs/troubleshooting.html#can-t-find-serial-number)**
 
+- **Why isn't this XX from Vector SDK supported?** Well, I didn't wrapped all the functions from the SDK - only the main ones as i see it. Yet, if you found a missing function that you need/would like to see as part of vector_ros, please consider opening a [new issue](https://github.com/betab0t/vector_ros/issues/new) with your proposal.
 
