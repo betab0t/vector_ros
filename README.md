@@ -1,25 +1,52 @@
 # vector_ros
-This repository contains my unofficial ROS package for [Anki Vector](https://www.anki.com/en-us/vector) home robot.
+This repository contains an *unofficial* ROS package for [Anki Vector](https://www.anki.com/en-us/vector) that I started as a small side project after finishing several online ROS courses. This package is essentially a wrapping of core Vector functions from [Vector Python SDK](https://github.com/anki/vector-python-sdk) as ROS topics, services and actions(full list below). In order to showcase the package I wrote a simple [red ball tracking node](https://github.com/betab0t/vector_ros/blob/develop/nodes/simple_ball_tracker_node.py) which subscribes to the camera feed coming from Vector, locates the red ball using cv_bridge/OpenCV and publish Twist messages to move the robot accurdenly as you can see in the following video:
+
+<p align="center">
+  <a target="_blank" href="http://www.youtube.com/watch?v=XxaOyA-M3U4">
+    <img src="http://img.youtube.com/vi/XxaOyA-M3U4/0.jpg">
+  </a>
+</p>
 
 # Setup
+## Requirements(non Docker setup)
+- ROS Melodic with Python 3.6 installed
+- [Vector Python SDK](https://github.com/anki/vector-python-sdk)
+- [diff_drive](https://github.com/merose/diff_drive) package
+
 ## Docker Image
+It's highly recommended to use the supplied Dockerfile insted of installing directly on your machine mainly because of the tricky setup required to run Python 3 properly on ROS. follow the instructions:
+1. Install [Docker](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04) and [docker-compose](https://docs.docker.com/compose/install/) if you dont have it already installed
+```sh
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+sudo apt-get update
+sudo apt-get install -y docker-ce
+sudo curl -L "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+```
+
+2. Clone this repository and create docker-compose file from template
 ```sh
 git clone https://github.com/betab0t/vector_ros
 cd vector_ros
 cp docker-compose-TEMPLATE.yml docker-compose.yml
 nano docker-compose.yml
 ```
-edit the following lines and save:
+
+3. Edit the following lines and save
 ```yaml
 vector_ip: <VECTOR_IP>
 vector_name: <VECTOR_NAME>
 vector_serial: <VECTOR_SERIAL> 
 ```
+*Not sure how to get this info? see FAQ section below*
 
+4. Build and start the container
 ```sh
 sudo docker-compose build --build-arg anki_user_email=<ANKI_ACCOUNT_EMAIL> --build-arg anki_user_password=<ANKI_ACCOUNT_PASSWORD>
 sudo docker-compose up
 ```
+*Use your [Anki Developer](https://developer.anki.com/) username and password*
 
 # Topics
 * `/vector/camera`  *(sensor_msgs/Image)*
@@ -107,5 +134,4 @@ goal:
 
 - **[How do i find Vector's serial number?](https://developer.anki.com/vector/docs/troubleshooting.html#can-t-find-serial-number)**
 
-- **Why isn't this XX from Vector SDK supported?** Well, I didn't wrapped all the functions from the SDK - only the main ones as i see it. Yet, if you found a missing function that you need/would like to see as part of vector_ros, please consider opening a [new issue](https://github.com/betab0t/vector_ros/issues/new) with your proposal.
-
+- **Why isn't this XX from Vector SDK supported?** Well, I didn't wrap all the functions from the SDK - only the main ones as i see it. Yet, if you found a missing function that you need/would like to see as part of vector_ros, please consider opening a [new issue](https://github.com/betab0t/vector_ros/issues/new) with your proposal.
