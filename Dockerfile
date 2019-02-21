@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y \
     python-catkin-tools \
     python3-dev \
     python3-catkin-pkg-modules \
-    python3-numpy python3-yaml \
+    python3-numpy \
     ros-melodic-cv-bridge
 
 RUN pip3 install \
