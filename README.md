@@ -14,7 +14,7 @@ This repository contains an *unofficial* ROS package for [Anki Vector](https://w
 - [diff_drive](https://github.com/merose/diff_drive) package
 
 ## Docker Image
-It's highly recommended to use the supplied Dockerfile insted of installing directly on your machine mainly because of the tricky setup required to run Python 3 properly on ROS. follow the instructions:
+It's highly recommended to use the supplied Dockerfile insted of installing directly on your machine mainly because of the tricky setup required to run Python 3 properly on ROS. If you wish to do this setup by yourself then [I wrote a blog post explaining how](https://medium.com/@beta_b0t/how-to-setup-ros-with-python-3-44a69ca36674) that you can use, else follow these instructions:
 1. Install [Docker](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04) and [docker-compose](https://docs.docker.com/compose/install/) if you dont have it already installed
 ```sh
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
