@@ -33,7 +33,7 @@ RUN cd /catkin_ws/src/ && \
 
 # Prepare Excpet script used to configure the SDK
 RUN printf '#!/usr/bin/expect -f\n\
-    \rspawn python3.6 -m anki_vector.configure -e $env(env_anki_user_email) -i $env(env_vector_name) -n $env(env_vector_ip) -s $env(env_vector_serial)\n\
+    \rspawn python3.6 -m anki_vector.configure -e $env(env_anki_user_email) -n $env(env_vector_name) -i $env(env_vector_ip) -s $env(env_vector_serial)\n\
     \rexpect "Do you wish to proceed? \\(y/n\\) "\n\
     \rsend "y\\n"\n\
     \rexpect "Enter Password: "\n\
