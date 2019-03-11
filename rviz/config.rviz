@@ -69,6 +69,34 @@ Visualization Manager:
           Alpha: 1
           Show Axes: true
           Show Trail: false
+        camera_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        front_left_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        front_right_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        full_lift:
+          Alpha: 1
+          Show Axes: true
+          Show Trail: false
+        head:
+          Alpha: 1
+          Show Axes: true
+          Show Trail: false
+        rear_left_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        rear_right_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
       Name: RobotModel
       Robot Description: robot_description
       TF Prefix: ""

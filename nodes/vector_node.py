@@ -11,6 +11,7 @@ from vector_ros.anim import Animation
 from vector_ros.drive import Drive
 from vector_ros.camera import Camera
 from vector_ros.behavior import Behavior
+from vector_ros.tf import JointStatesPublisher
 
 if __name__=="__main__":
     rospy.init_node("vector")
@@ -39,5 +40,8 @@ if __name__=="__main__":
 
     camera_thread = threading.Thread(target=Camera, args=(async_robot,))
     camera_thread.start()
+
+    tf_thread = threading.Thread(target=JointStatesPublisher, args=(async_robot,))
+    tf_thread.start()
 
     rospy.spin()
