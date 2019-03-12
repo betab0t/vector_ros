@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <robot name="Vector" xmlns:xacro="http://ros.org/wiki/xacro">
+  <!-- This URDF is based on Cozmo descriptor from The Construct ROSject(https://rds.theconstructsim.com/r/830420c6168e/cozmo_simulation_3__4dca/) -->
   <link name="base_link"/>
   <link name="front_left_wheel"/>
   <link name="front_right_wheel"/>

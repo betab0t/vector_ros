@@ -7,6 +7,9 @@ This repository contains an *unofficial* ROS package for [Anki Vector](https://w
   </a>
 </p>
 
+# Mentions
+* http://www.theconstructsim.com/using-anki-vector-robot-ros-omri-ben-bassat :robot: :tv:
+
 # Setup
 ## Requirements(non Docker setup)
 - ROS Melodic with Python 3.6 installed
