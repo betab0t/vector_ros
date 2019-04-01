@@ -53,12 +53,4 @@
         <param name="~forwardMovementOnly" value="false" />
         <remap from="cmd_vel" to="/robot/cmd_vel" />
     </node>
-
-    <node name="rqt_robot_steering" type="rqt_robot_steering" pkg="rqt_robot_steering">
-        <param name="default_topic" value="/robot/cmd_vel"/>
-    </node>
-    
-    <arg name="rvizconfig" default="$(find vector_ros)/rviz/config.rviz" />
-    <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
-
 </launch>
