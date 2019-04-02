@@ -12,7 +12,7 @@ services:
     environment:
       - DISPLAY
       - ROS_IPV6=on
-      - export ROS_MASTER_URI=http://master:11311
+      - ROS_MASTER_URI=http://master:11311
     extra_hosts:
     - "master:::1"
     network_mode: host
