@@ -15,4 +15,4 @@ services:
       - ROS_MASTER_URI=http://master:11311
     extra_hosts:
     - "master:::1"
-    network_mode: host
+    network_mode: host # https://github.com/moby/moby/issues/5708

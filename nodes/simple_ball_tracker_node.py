@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.6
+#!/usr/bin/env python2.7
 
 import rospy
 import cv2
@@ -8,8 +8,11 @@ import numpy as np
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import Twist
 
-from vector_ros.srv import HeadAngle
-from vector_ros.srv import SayText
+try:
+    from vector_ros.srv import HeadAngle
+    from vector_ros.srv import SayText
+except ImportError:
+    print("missing service message definitions! did you `catkin_make` and `source` vector_ros package/ws?")
 
 class SimpleBallTracker(object):
     def __init__(self):

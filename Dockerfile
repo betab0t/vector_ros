@@ -73,5 +73,4 @@ WORKDIR /catkin_ws
 CMD /bin/bash -c "catkin_make --pkg vector_ros && \
                   source /catkin_ws/devel/setup.bash && \
                   source /cv_bridge_build_ws/install/setup.bash --extend && \
-                  export QT_X11_NO_MITSHM=1 && \
                   roslaunch vector_ros vector.launch"
