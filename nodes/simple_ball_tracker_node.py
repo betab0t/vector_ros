@@ -47,7 +47,7 @@ class SimpleBallTracker(object):
         mask = cv2.add(mask_red_lower_range, mask_red_upper_range)
 
         # find largest-area contour
-        contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         largest_area_object = None
         for contour in contours:
             moments = cv2.moments(contour)
