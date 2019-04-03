@@ -9,12 +9,10 @@ services:
         vector_serial: <VECTOR_SERIAL> # https://developer.anki.com/vector/docs/troubleshooting.html#can-t-find-serial-number
     volumes:
       - .:/catkin_ws/src/vector_ros
-      - /home/${USER}:/home/${USER}
-      - /etc/group:/etc/group:ro
-      - /etc/passwd:/etc/passwd:ro
-      - /etc/shadow:/etc/shadow:ro
-      - /etc/sudoers.d:/etc/sudoers.d:ro
-      - /tmp/.X11-unix:/tmp/.X11-unix:rw
-    user: ${USER}
     environment:
       - DISPLAY
+      - ROS_IPV6=on
+      - ROS_MASTER_URI=http://master:11311
+    extra_hosts:
+    - "master:::1"
+    network_mode: host # https://github.com/moby/moby/issues/5708

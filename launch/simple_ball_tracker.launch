@@ -1,4 +1,3 @@
 <launch>
-    <include file="$(find vector_ros)/launch/vector.launch"/>
     <node pkg="vector_ros" type="simple_ball_tracker_node.py" name="simple_ball_tracker"/>
 </launch>

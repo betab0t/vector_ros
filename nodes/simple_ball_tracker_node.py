@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.6
+#!/usr/bin/env python2.7
 
 import rospy
 import cv2
@@ -8,8 +8,11 @@ import numpy as np
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import Twist
 
-from vector_ros.srv import HeadAngle
-from vector_ros.srv import SayText
+try:
+    from vector_ros.srv import HeadAngle
+    from vector_ros.srv import SayText
+except ImportError:
+    print("missing service message definitions! did you `catkin_make` and `source` vector_ros package/ws?")
 
 class SimpleBallTracker(object):
     def __init__(self):
@@ -44,7 +47,7 @@ class SimpleBallTracker(object):
         mask = cv2.add(mask_red_lower_range, mask_red_upper_range)
 
         # find largest-area contour
-        contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         largest_area_object = None
         for contour in contours:
             moments = cv2.moments(contour)
