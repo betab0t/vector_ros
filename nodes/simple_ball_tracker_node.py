@@ -7,6 +7,7 @@ import numpy as np
 
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import Twist
+from std_msgs.msg import Float64
 
 try:
     from vector_ros.srv import HeadAngle
@@ -15,10 +16,19 @@ except ImportError:
     print("missing service message definitions! did you `catkin_make` and `source` vector_ros package/ws?")
 
 class SimpleBallTracker(object):
-    def __init__(self):
-        self.set_head_horizontal()
-        self.cmd_vel_pubisher = rospy.Publisher("/robot/cmd_vel", Twist, queue_size=1)
+    def __init__(self, is_simulation=False):
+        self.cmd_vel_pubisher = rospy.Publisher("/vector/cmd_vel", Twist, queue_size=1)
         self.cmd_vel_msg = Twist()
+
+        self.is_ball_hidden = True
+        self.is_simulation = is_simulation
+        if not self.is_simulation:
+            # speech not supported in Gazebo
+            rospy.wait_for_service("/vector/say_text")
+            self.say_text = rospy.ServiceProxy("/vector/say_text", SayText)
+
+        # future improvement - add head tracking
+        self.set_head_horizontal()
 
         # init camera feed
         self.cv_bridge = cv_bridge.CvBridge()
@@ -27,14 +37,14 @@ class SimpleBallTracker(object):
         # hsv color ranges of our red ball
         self.hsv_color_ranges = ((np.array([0, 70, 50]), np.array([10, 255, 255])), (np.array([170, 70, 50]), np.array([180, 255, 255])))
 
-        rospy.wait_for_service("/vector/say_text")
-        self.say_text = rospy.ServiceProxy("/vector/say_text", SayText)
-        self.is_ball_hidden = True
-
     def set_head_horizontal(self):
-        rospy.wait_for_service("/vector/set_head_angle")
-        set_head_angle = rospy.ServiceProxy("/vector/set_head_angle", HeadAngle)
-        set_head_angle(deg=float(0.0))
+        if self.is_simulation:
+            head_angle_publisher = rospy.Publisher("/vector/head_angle/command", Float64, queue_size=1)
+            head_angle_publisher.publish(Float64(data=0.5))
+        else:
+            rospy.wait_for_service("/vector/set_head_angle")
+            set_head_angle = rospy.ServiceProxy("/vector/set_head_angle", HeadAngle)
+            set_head_angle(deg=float(0.0))
 
     def image_cb(self, msg):
         cv_image = self.cv_bridge.imgmsg_to_cv2(msg, desired_encoding="bgr8")
@@ -61,16 +71,16 @@ class SimpleBallTracker(object):
 
             # say something if the ball was previously hidden
             if self.is_ball_hidden == True:
-                self.say_text(text="I found my ball")
+                if not self.is_simulation:
+                    self.say_text(text="I found my ball")
+                rospy.loginfo("I found my ball")
                 self.is_ball_hidden = False
 
             # check if the ball is approximately centered, else apply simple proportional command
             if (width / 2 - (width / 12)) < cx < (width / 2 + (width / 12)):
                 self.cmd_vel_msg.angular.z = 0.0
-
             else:
                 self.cmd_vel_msg.angular.z = -(cx - (width / 2)) / 300 # P=300
-
         else:
             self.cmd_vel_msg.angular.z = 0.0
             self.is_ball_hidden = True
@@ -83,5 +93,5 @@ class SimpleBallTracker(object):
 
 if __name__=="__main__":
     rospy.init_node("simple_ball_tracker")
-    SimpleBallTracker()
+    SimpleBallTracker(rospy.get_param("~is_simulation", False))
     rospy.spin()

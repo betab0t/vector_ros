@@ -1,3 +1,7 @@
 <launch>
-    <node pkg="vector_ros" type="simple_ball_tracker_node.py" name="simple_ball_tracker"/>
+    <arg name="is_simulation" default="False"/>
+
+    <node pkg="vector_ros" type="simple_ball_tracker_node.py" name="simple_ball_tracker" output="screen">
+        <param name="is_simulation" value="$(arg is_simulation)"/>
+    </node>
 </launch>
