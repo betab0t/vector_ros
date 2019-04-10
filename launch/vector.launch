@@ -29,7 +29,7 @@
       max_motor_speed: 3000
       timeout: 1.0
     </rosparam>
-    <remap from="cmd_vel" to="/robot/cmd_vel" />
+    <remap from="cmd_vel" to="/vector/cmd_vel" />
     </node>
 
     <node name="odom_publisher" pkg="diff_drive" type="diff_drive_odometry" output="screen">
@@ -51,6 +51,6 @@
         <param name="~linear_tolerance" value="0.01" />
         <param name="~angular_tolerance" value="0.04" />
         <param name="~forwardMovementOnly" value="false" />
-        <remap from="cmd_vel" to="/robot/cmd_vel" />
+        <remap from="cmd_vel" to="/vector/cmd_vel" />
     </node>
 </launch>
