@@ -1,5 +1,6 @@
 # vector_ros
-This repository contains an *unofficial* ROS package for [Anki Vector](https://www.anki.com/en-us/vector) that I started as a small side project after finishing several online ROS courses. This package is essentially a wrapping of core Vector functions from [Vector Python SDK](https://github.com/anki/vector-python-sdk) as ROS topics, services and actions(full list below). In order to showcase the package I wrote a simple [red ball tracking node](https://github.com/betab0t/vector_ros/blob/develop/nodes/simple_ball_tracker_node.py) which subscribes to the camera feed coming from Vector, locates the red ball using cv_bridge/OpenCV and publish Twist messages to move the robot accurdenly as you can see in the following video:
+This repository contains an *unofficial* ROS package for [Anki Vector](https://www.anki.com/en-us/vector) that I started as a small side project after finishing several online ROS courses. This package is essentially a wrapping of core Vector functions from [Vector 
+SDK](https://github.com/anki/vector-python-sdk) as ROS topics, services and actions(full list below). In order to showcase the package I wrote a simple [red ball tracking node](https://github.com/betab0t/vector_ros/blob/develop/nodes/simple_ball_tracker_node.py) which subscribes to the camera feed coming from Vector, locates the red ball using cv_bridge/OpenCV and publish Twist messages to move the robot accurdenly as you can see in the following video:
 
 <p align="center">
   <a target="_blank" href="http://www.youtube.com/watch?v=XxaOyA-M3U4">
@@ -16,7 +17,7 @@ Vector ROS project is actually divided into three separated packages, which are:
 * Main package, contains message service descriptors and example nodes, such as a red ball tracker.
 ## [vector_ros_driver](https://github.com/betab0t/vector_ros_driver)
 * Physical / "real" robot driver node - this node does the actual interface to Vector using Vector Python SDK.
-* Notice this package was developed using Python 3.6 to work with Vector's SDK. :python:
+* Notice this package was developed using Python 3.6 to work with Vector's SDK. :snake:
 * Offers easy deployment using Docker! :whale:
 ## [cozmo_simulation](https://bitbucket.org/theconstructcore/cozmo_simulation/)
 * Simulated robot package for both Cozmo and Vector, created by the guys at [The Construct](http://theconstructsim.com) so we can use Vector in Gazebo.
