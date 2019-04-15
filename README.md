@@ -8,69 +8,31 @@ This repository contains an *unofficial* ROS package for [Anki Vector](https://w
 </p>
 
 # Mentions
-* http://www.theconstructsim.com/using-anki-vector-robot-ros-omri-ben-bassat :robot: :tv:
+* ["RDP 039: Using Anki Vector robot with ROS with Omri Ben-Bassat"](http://www.theconstructsim.com/using-anki-vector-robot-ros-omri-ben-bassat) :robot: :tv:
 
-# Setup
-## Requirements(non Docker setup)
-- ROS Melodic with Python 3.6 installed
-- [Vector Python SDK](https://github.com/anki/vector-python-sdk)
-- [diff_drive](https://github.com/merose/diff_drive) package
+# General Overview
+Vector ROS project is actually divided into three separated packages, which are:
+## vector_ros
+* Main package, contains message service descriptors and example nodes, such as a red ball tracker.
+## [vector_ros_driver](https://github.com/betab0t/vector_ros_driver)
+* Physical / "real" robot driver node - this node does the actual interface to Vector using Vector Python SDK.
+* Notice this package was developed using Python 3.6 to work with Vector's SDK. :python:
+* Offers easy deployment using Docker! :whale:
+## [cozmo_simulation](https://bitbucket.org/theconstructcore/cozmo_simulation/)
+* Simulated robot package for both Cozmo and Vector, created by the guys at [The Construct](http://theconstructsim.com) so we can use Vector in Gazebo.
+* [Video tutorial showing spawn simulated Vector in ROS Developers Studio](http://www.theconstructsim.com/morpheus-chair-vector-ros-simulation-t2-ep-3/)
 
-## Docker Image
-It's highly recommended to use the supplied Dockerfile insted of installing directly on your machine mainly because of the tricky setup required to run Python 3 properly on ROS. If you wish to do this setup by yourself then [I wrote a blog post explaining how](https://medium.com/@beta_b0t/how-to-setup-ros-with-python-3-44a69ca36674) that you can use, else follow these instructions:
-1. Install [Docker](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04) and [docker-compose](https://docs.docker.com/compose/install/) if you dont have it already installed
-```sh
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-sudo apt-get update
-sudo apt-get install -y docker-ce
-sudo curl -L "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
-```
-
-2. Clone this repository and create docker-compose file from template
-```sh
-git clone https://github.com/betab0t/vector_ros
-cd vector_ros
-cp docker-compose-TEMPLATE.yml docker-compose.yml
-nano docker-compose.yml
-```
-
-3. Edit the following lines and save
-```yaml
-vector_ip: <VECTOR_IP>
-vector_name: <VECTOR_NAME>
-vector_serial: <VECTOR_SERIAL> 
-```
-*Not sure how to get this info? see FAQ section below*
-
-4. Build and start the container
-```sh
-sudo docker-compose build --build-arg anki_user_email=<ANKI_ACCOUNT_EMAIL> --build-arg anki_user_password=<ANKI_ACCOUNT_PASSWORD>
-sudo docker-compose up
-```
-*Use your [Anki Developer](https://developer.anki.com/) username and password*
+# Setup With Physical Robot
+You can find the full setup instructions at [vector_ros_driver](https://github.com/betab0t/vector_ros_driver).
 
 # Topics
 * `/vector/camera`  *(sensor_msgs/Image)*
 
 Vector camera feed.
 
-* `/lwheel_ticks` *(std_msgs/Int32)*
+* `/vector/cmd_vel` *(geometry_msgs/Twist)*
 
-Cumulative encoder ticks of the left wheel. used by [diff_drive](https://github.com/merose/diff_drive) package.
-
-* `/rwheel_ticks`  *(std_msgs/Int32)*
-
-Cumulative encoder ticks of the right wheel. used by [diff_drive](https://github.com/merose/diff_drive) package.
-
-* `/lwheel_rate`  *(std_msgs/Int32)*
-
-Left wheel rotation rate. used by [diff_drive](https://github.com/merose/diff_drive) package.
-
-* `/rwheel_rate`  *(std_msgs/Int32)*
-
-Right wheel rotation rate. used by [diff_drive](https://github.com/merose/diff_drive) package.
+Move Vector around.
 
 # Services
 
@@ -131,10 +93,4 @@ goal:
 ```
 
 # FAQ
-- **[How do i find Vector's IP address?](https://developer.anki.com/vector/docs/troubleshooting.html#can-t-find-vector-s-ip-address)**
-
-- **[How do i find Vector's name?](https://developer.anki.com/vector/docs/troubleshooting.html#can-t-find-robot-name)**
-
-- **[How do i find Vector's serial number?](https://developer.anki.com/vector/docs/troubleshooting.html#can-t-find-serial-number)**
-
 - **Why isn't this XX from Vector SDK supported?** Well, I didn't wrap all the functions from the SDK - only the main ones as i see it. Yet, if you found a missing function that you need/would like to see as part of vector_ros, please consider opening a [new issue](https://github.com/betab0t/vector_ros/issues/new) with your proposal.
