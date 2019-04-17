@@ -13,31 +13,34 @@ try:
     from vector_ros.srv import HeadAngle
     from vector_ros.srv import SayText
 except ImportError:
-    print("missing service message definitions! did you `catkin_make` and `source` vector_ros package/ws?")
+    print("missing service message definitions! did you `catkin_make` and `source`?")
+
 
 class SimpleBallTracker(object):
     def __init__(self, is_simulation=False):
+        self.is_simulation = is_simulation
+        self.is_ball_hidden = True
+
+        self._set_head_horizontal()
+        self._init_cmd_vel_publisher()
+        self._init_speech()
+        self._init_camera_feed()
+
+    def _init_cmd_vel_publisher(self):
         self.cmd_vel_pubisher = rospy.Publisher("/vector/cmd_vel", Twist, queue_size=1)
         self.cmd_vel_msg = Twist()
 
-        self.is_ball_hidden = True
-        self.is_simulation = is_simulation
+    def _init_speech(self):
         if not self.is_simulation:
-            # speech not supported in Gazebo
+            # speech supported only in real robot
             rospy.wait_for_service("/vector/say_text")
-            self.say_text = rospy.ServiceProxy("/vector/say_text", SayText)
+            self.say_text_service_proxy = rospy.ServiceProxy("/vector/say_text", SayText)
 
-        # future improvement - add head tracking
-        self.set_head_horizontal()
-
-        # init camera feed
+    def _init_camera_feed(self):
         self.cv_bridge = cv_bridge.CvBridge()
-        self.image_subscriber = rospy.Subscriber("/vector/camera", Image, self.image_cb)
+        self.image_subscriber = rospy.Subscriber("/vector/camera", Image, self.image_callback)
 
-        # hsv color ranges of our red ball
-        self.hsv_color_ranges = ((np.array([0, 70, 50]), np.array([10, 255, 255])), (np.array([170, 70, 50]), np.array([180, 255, 255])))
-
-    def set_head_horizontal(self):
+    def _set_head_horizontal(self):
         if self.is_simulation:
             head_angle_publisher = rospy.Publisher("/vector/head_angle/command", Float64, queue_size=1)
             head_angle_publisher.publish(Float64(data=0.5))
@@ -46,50 +49,98 @@ class SimpleBallTracker(object):
             set_head_angle = rospy.ServiceProxy("/vector/set_head_angle", HeadAngle)
             set_head_angle(deg=float(0.0))
 
-    def image_cb(self, msg):
-        cv_image = self.cv_bridge.imgmsg_to_cv2(msg, desired_encoding="bgr8")
-        height, width, _ = cv_image.shape
-        hsv = cv2.cvtColor(cv_image, cv2.COLOR_BGR2HSV)
+    def image_callback(self, img_msg):
+        cv_image = self._get_cv2_image(img_msg)
+        contours = self._get_red_objects_contours(cv_image)
+        largest_area_red_object = self._get_largest_red_object(contours)
+        self.is_ball_hidden = not self._is_valid_moments(largest_area_red_object)
+        if self.is_ball_hidden:
+            self._stop_robot()
+            self._show_image(cv_image)
+        else:
+            red_ball_center = self._get_moments_center(largest_area_red_object)
+            desired_z_axis_velocity = self._calc_desired_z_axis_velocity(red_ball_center, cv_image)
+            self._rotate_robot(desired_z_axis_velocity)
+            self._say_i_found_my_ball()
+            self._show_image_with_marker(cv_image, red_ball_center)
 
-        # red has two hsv ranges, create a mask for both & combine them
-        mask_red_lower_range = cv2.inRange(hsv, np.array([0, 100, 100]), np.array([10, 255, 255]))
-        mask_red_upper_range = cv2.inRange(hsv, np.array([160, 100, 100]), np.array([180, 255, 255]))
-        mask = cv2.add(mask_red_lower_range, mask_red_upper_range)
+    def _get_cv2_image(self, img_msg):
+        return self.cv_bridge.imgmsg_to_cv2(img_msg, desired_encoding="bgr8")
 
-        # find largest-area contour
-        _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    @staticmethod
+    def _get_red_objects_contours(image):
+        def filter_non_red_colors(rgb_image):
+            hsv_image = cv2.cvtColor(rgb_image, cv2.COLOR_BGR2HSV)
+            mask_red_lower_range = cv2.inRange(hsv_image, np.array([0, 100, 100]), np.array([10, 255, 255]))
+            mask_red_upper_range = cv2.inRange(hsv_image, np.array([160, 100, 100]), np.array([180, 255, 255]))
+            return cv2.add(mask_red_lower_range, mask_red_upper_range)
+
+        return SimpleBallTracker._find_contours_cross_opencv_versions(filter_non_red_colors(image))
+
+    @staticmethod
+    def _find_contours_cross_opencv_versions(image):
+        if cv2.getVersionMajor() == 3:
+            _, contours, _ = cv2.findContours(image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        else:
+            contours, _ = cv2.findContours(image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        return contours
+
+    @staticmethod
+    def _get_largest_red_object(contours):
         largest_area_object = None
         for contour in contours:
             moments = cv2.moments(contour)
             if largest_area_object is None or moments['m00'] > largest_area_object['m00']:
                 largest_area_object = moments
+        return largest_area_object
 
-        # find center of contour
-        if largest_area_object and not any(largest_area_object[x] == 0 for x in ['m00', 'm10', 'm01']):
-            ball_center = cx, cy = int(largest_area_object['m10'] / largest_area_object['m00']), int(largest_area_object['m01'] / largest_area_object['m00'])
-            cv2.circle(cv_image, ball_center, 10, (0, 255, 0), -1)
+    def _say_text(self, text):
+        if not self.is_simulation:
+            self.say_text_service_proxy(text=text)
+        rospy.loginfo(text)
 
-            # say something if the ball was previously hidden
-            if self.is_ball_hidden == True:
-                if not self.is_simulation:
-                    self.say_text(text="I found my ball")
-                rospy.loginfo("I found my ball")
-                self.is_ball_hidden = False
+    def _say_i_found_my_ball(self):
+        if self.is_ball_hidden:
+            self._say_text("I found my ball")
+            self.is_ball_hidden = False
 
-            # check if the ball is approximately centered, else apply simple proportional command
-            if (width / 2 - (width / 12)) < cx < (width / 2 + (width / 12)):
-                self.cmd_vel_msg.angular.z = 0.0
-            else:
-                self.cmd_vel_msg.angular.z = -(cx - (width / 2)) / 300 # P=300
-        else:
-            self.cmd_vel_msg.angular.z = 0.0
-            self.is_ball_hidden = True
+    @staticmethod
+    def _get_moments_center(moments):
+        return int(moments['m10'] / moments['m00']), int(moments['m01'] / moments['m00'])
 
-        # move vector
+    @staticmethod
+    def _is_valid_moments(moments):
+        return moments and not any(moments[x] == 0 for x in ['m00', 'm10', 'm01'])
+
+    @staticmethod
+    def _calc_proportional_z_angle_velocity(image_width, red_ball_center_x, p=300):
+        def is_ball_in_tolerance():
+            return (image_width / 2 - (image_width / 12)) < red_ball_center_x < (image_width / 2 + (image_width / 12))
+
+        return 0.0 if is_ball_in_tolerance() else float(-(red_ball_center_x - (image_width / 2))) / float(p)
+
+    def _rotate_robot(self, z_axis_velocity):
+        self.cmd_vel_msg.angular.z = float(z_axis_velocity)
         self.cmd_vel_pubisher.publish(self.cmd_vel_msg)
 
-        cv2.imshow("Vector View", cv_image)
+    def _stop_robot(self):
+        self._rotate_robot(0.0)
+
+    def _calc_desired_z_axis_velocity(self, red_ball_center, image):
+        height, width = image.shape[:2]
+        cx, cy = red_ball_center
+        return self._calc_proportional_z_angle_velocity(width, cx)
+
+    @staticmethod
+    def _show_image(image):
+        cv2.imshow("Vector View", image)
         cv2.waitKey(1)
+
+    @staticmethod
+    def _show_image_with_marker(image, marker_pos):
+        cv2.circle(image, marker_pos, 10, (0, 255, 0), -1)
+        SimpleBallTracker._show_image(image)
+
 
 if __name__=="__main__":
     rospy.init_node("simple_ball_tracker")
