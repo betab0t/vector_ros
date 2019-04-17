@@ -117,7 +117,7 @@ class SimpleBallTracker(object):
         def is_ball_in_tolerance():
             return (image_width / 2 - (image_width / 12)) < red_ball_center_x < (image_width / 2 + (image_width / 12))
 
-        return 0.0 if is_ball_in_tolerance() else float(-(red_ball_center_x - (image_width / 2)) / p)
+        return 0.0 if is_ball_in_tolerance() else float(-(red_ball_center_x - (image_width / 2))) / float(p)
 
     def _rotate_robot(self, z_axis_velocity):
         self.cmd_vel_msg.angular.z = float(z_axis_velocity)
@@ -127,7 +127,7 @@ class SimpleBallTracker(object):
         self._rotate_robot(0.0)
 
     def _calc_desired_z_axis_velocity(self, red_ball_center, image):
-        _, width = image.shape[:2]
+        height, width = image.shape[:2]
         cx, cy = red_ball_center
         return self._calc_proportional_z_angle_velocity(width, cx)
 
