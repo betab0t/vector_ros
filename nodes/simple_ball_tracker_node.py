@@ -34,7 +34,7 @@ class SimpleBallTracker(object):
         if not self.is_simulation:
             # speech supported only in real robot
             rospy.wait_for_service("/vector/say_text")
-            self.say_text = rospy.ServiceProxy("/vector/say_text", SayText)
+            self.say_text_service_proxy = rospy.ServiceProxy("/vector/say_text", SayText)
 
     def _init_camera_feed(self):
         self.cv_bridge = cv_bridge.CvBridge()
@@ -75,7 +75,14 @@ class SimpleBallTracker(object):
             mask_red_upper_range = cv2.inRange(hsv_image, np.array([160, 100, 100]), np.array([180, 255, 255]))
             return cv2.add(mask_red_lower_range, mask_red_upper_range)
 
-        _, contours, _ = cv2.findContours(filter_non_red_colors(image), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        return SimpleBallTracker._find_contours_cross_opencv_versions(filter_non_red_colors(image))
+
+    @staticmethod
+    def _find_contours_cross_opencv_versions(image):
+        if cv2.getVersionMajor() == 3:
+            _, contours, _ = cv2.findContours(image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        else:
+            contours, _ = cv2.findContours(image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         return contours
 
     @staticmethod
@@ -89,7 +96,7 @@ class SimpleBallTracker(object):
 
     def _say_text(self, text):
         if not self.is_simulation:
-            self.say_text(text=text)
+            self.say_text_service_proxy(text=text)
         rospy.loginfo(text)
 
     def _say_i_found_my_ball(self):
@@ -110,7 +117,7 @@ class SimpleBallTracker(object):
         def is_ball_in_tolerance():
             return (image_width / 2 - (image_width / 12)) < red_ball_center_x < (image_width / 2 + (image_width / 12))
 
-        return 0.0 if is_ball_in_tolerance() else -(red_ball_center_x - (image_width / 2)) / p
+        return 0.0 if is_ball_in_tolerance() else float(-(red_ball_center_x - (image_width / 2)) / p)
 
     def _rotate_robot(self, z_axis_velocity):
         self.cmd_vel_msg.angular.z = float(z_axis_velocity)
@@ -120,8 +127,8 @@ class SimpleBallTracker(object):
         self._rotate_robot(0.0)
 
     def _calc_desired_z_axis_velocity(self, red_ball_center, image):
-        _, width, _ = image.shape
-        cx = red_ball_center[0]
+        _, width = image.shape[:2]
+        cx, cy = red_ball_center
         return self._calc_proportional_z_angle_velocity(width, cx)
 
     @staticmethod
