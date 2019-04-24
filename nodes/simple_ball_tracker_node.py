@@ -79,7 +79,7 @@ class SimpleBallTracker(object):
 
     @staticmethod
     def _find_contours_cross_opencv_versions(image):
-        if cv2.getVersionMajor() == 3:
+        if cv2.__version__.startswith('3'):
             _, contours, _ = cv2.findContours(image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         else:
             contours, _ = cv2.findContours(image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
