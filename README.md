@@ -8,7 +8,8 @@ SDK](https://github.com/anki/vector-python-sdk) as ROS topics, services and acti
   </a>
 </p>
 
-# Mentions
+# Mentions / Publications
+* [ROSCon Fr 2019 - "How I ROSified my little Anki Vector home robot"](https://player.vimeo.com/video/340699692#t=1h14m15s) :speech_balloon:
 * ["RDP 039: Using Anki Vector robot with ROS with Omri Ben-Bassat"](http://www.theconstructsim.com/using-anki-vector-robot-ros-omri-ben-bassat) :robot: :tv:
 * ["[Morpheus Chair] Vector ROS Simulation | T2.Ep.3"](http://www.theconstructsim.com/morpheus-chair-vector-ros-simulation-t2-ep-3/) :hammer:
 * ["[Morpheus Chair] Vector ROSDS CloudConnection | T2.Ep.4"](http://www.theconstructsim.com/morpheus-chair-vector-rosds-cloudconnection-t2-ep-4/) :wrench::cloud:
